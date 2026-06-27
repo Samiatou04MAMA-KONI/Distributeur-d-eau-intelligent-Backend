@@ -5,16 +5,17 @@ const TransactionSchema = new mongoose.Schema({
     type: String,
     required: true,    // format 'YYYY-MM-DD'
   },
-  heure: {
-    type: String,
-    required: true,    // format 'HH:MM'
-  },
-  pieces: {
+  volume: {
     type: Number,
     required: true,
-    min: 1
+    min: 0
   },
   litres: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  pieces: {
     type: Number,
     required: true,
     min: 0

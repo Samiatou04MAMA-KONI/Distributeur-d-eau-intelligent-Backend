@@ -11,18 +11,19 @@ exports.getDashboardData = async (req, res) => {
     
     // Statistiques du jour
     const todayTransactions = await Transaction.find({ date: today });
-    const totalVentes = todayTransactions.reduce((sum, t) => sum + t.montant, 0);
-    const totalPieces = todayTransactions.reduce((sum, t) => sum + t.pieces, 0);
-    const totalLitres = todayTransactions.reduce((sum, t) => sum + t.litres, 0);
+    const totalLitres = todayTransactions.reduce((sum, t) => sum + (t.volume || 0), 0);
+    const totalVentes = totalLitres * 50;      // 1 litre = 50 FCFA
+    const totalPieces = totalLitres;           // 1 litre = 1 pièce de 50F
     const totalTransactions = todayTransactions.length;
 
-    // Évolution sur 7 jours
+    // Évolution sur 7 jours (du jour J-6 à aujourd'hui)
     const weeklyData = [];
     for (let i = 6; i >= 0; i--) {
       const date = subDays(new Date(), i);
       const dateStr = format(date, 'yyyy-MM-dd');
       const dailyTransactions = await Transaction.find({ date: dateStr });
-      const total = dailyTransactions.reduce((sum, t) => sum + t.montant, 0);
+      const dailyVolume = dailyTransactions.reduce((sum, t) => sum + (t.volume || 0), 0);
+      const total = dailyVolume * 50; // montant en FCFA
       weeklyData.push({ date: dateStr, total });
     }
 

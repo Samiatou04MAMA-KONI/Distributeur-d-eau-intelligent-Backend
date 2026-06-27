@@ -4,14 +4,29 @@ const Transaction = require('../models/Transaction');
 // @route   POST /api/transactions
 exports.addTransaction = async (req, res) => {
   try {
-    const { date, heure, pieces, litres, montant } = req.body;
+    const { volume, date } = req.body;
 
-    // Validation simple
-    if (!date || !heure || pieces === undefined || litres === undefined || montant === undefined) {
-      return res.status(400).json({ message: 'Tous les champs sont requis' });
+    // Validation : volume et date sont obligatoires
+    if (volume === undefined || volume === null || !date) {
+      return res.status(400).json({
+        message: 'Le volume et la date sont obligatoires.'
+      });
     }
 
-    const transaction = await Transaction.create({ date, heure, pieces, litres, montant });
+    // Calcul automatique des champs dérivés
+    const litres = volume;
+    const pieces = volume;          // 1 litre = 1 pièce de 50 FCFA
+    const montant = volume * 50;    // 1 litre = 50 FCFA
+
+    // Création de la transaction
+    const transaction = await Transaction.create({
+      date,
+      volume,
+      litres,
+      pieces,
+      montant
+    });
+
     res.status(201).json(transaction);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -34,9 +49,9 @@ exports.getTransactions = async (req, res) => {
       filter.date = { $regex: `^${year}` };
     }
 
-    // Trier par date (décroissante) puis heure (décroissante)
+    // Tri uniquement par date (décroissante) – le champ heure n'existe plus
     const transactions = await Transaction.find(filter)
-      .sort({ date: -1, heure: -1 });
+      .sort({ date: -1 });
 
     res.json(transactions);
   } catch (error) {
