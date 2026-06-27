@@ -3,19 +3,9 @@ const mongoose = require('mongoose');
 const TransactionSchema = new mongoose.Schema({
   date: {
     type: String,
-    required: true,    // format 'YYYY-MM-DD'
+    required: true,
   },
   volume: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  litres: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  pieces: {
     type: Number,
     required: true,
     min: 0

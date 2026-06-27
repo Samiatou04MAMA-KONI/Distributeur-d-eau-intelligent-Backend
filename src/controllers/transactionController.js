@@ -13,17 +13,13 @@ exports.addTransaction = async (req, res) => {
       });
     }
 
-    // Calcul automatique des champs dérivés
-    const litres = volume;
-    const pieces = volume;          // 1 litre = 1 pièce de 50 FCFA
-    const montant = volume * 50;    // 1 litre = 50 FCFA
+    // Calcul du montant : 1 litre = 50 FCFA
+    const montant = volume * 50;
 
-    // Création de la transaction
+    // Création de la transaction (sans 'litres' ni 'pieces')
     const transaction = await Transaction.create({
       date,
       volume,
-      litres,
-      pieces,
       montant
     });
 
@@ -49,7 +45,7 @@ exports.getTransactions = async (req, res) => {
       filter.date = { $regex: `^${year}` };
     }
 
-    // Tri uniquement par date (décroissante) – le champ heure n'existe plus
+    // Tri par date décroissante
     const transactions = await Transaction.find(filter)
       .sort({ date: -1 });
 
